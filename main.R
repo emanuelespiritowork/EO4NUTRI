@@ -129,11 +129,17 @@ traspose_list <- lapply(1:n, function(i) lapply(list_of_splitted_layers, "[[", i
 
 median_each_layer <- function(image){
   raster <- terra::rast(image)
-  median <- terra::median(raster)
+  median <- terra::median(raster, na.rm = T)
+  name <- terra::names(image[[1]][[1]])
+  terra::set.names(median, name)
   return(median)
 }
 
 list_of_median_of_bands <- lapply(traspose_list,median_each_layer)
 
 composite <- terra::rast(list_of_median_of_bands)
+
+terra::plot(composite)
+
+terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif")
 
