@@ -57,9 +57,11 @@ save_images_function <- function(image,percorso = "//10.0.1.243/nr_working/emanu
   return(date)
 }
 
-if(F){
-  lapply(list_of_images,save_images_function)
-}
+lapply(list_of_renamed_images,save_images_function)
+
+list_of_images_path <- list.files("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/", pattern = "\\.tif$", full.names = T)
+
+list_of_renamed_images <- lapply(list_of_images_path, read_images)
 
 apply_filters <- function(image){
   #create NDVI layer
@@ -97,7 +99,8 @@ apply_filters <- function(image){
   NSMI_layer[NSMI_layer[] > NSMI_threshold] <- NA
   
   #use the NSMI mask over the whole image
-  image_NSMI_mask <- terra::mask(image_nCAI_mask, NSMI_layer, maskvalues = NA, inverse = F)
+  image_NSMI_mask <- terra::mask(image_nCAI_mask, NSMI_layer, maskvalues = NA, inverse = F,
+                                 filename = gsub(".tif","_mask.tif",terra::sources(image)))
   
   #end
   return(image_NSMI_mask)
@@ -108,11 +111,10 @@ list_of_filtered_images <- lapply(list_of_renamed_images, apply_filters)
 vector <- terra::vect("//10.0.1.243/nr_data/1_vector_layer/Italy/Bonifiche Ferraresi/Piani_colturali/Jolanda/2023/piano_colturale_2023.shp")
 
 crop_around <- function(image){
-  crop <- terra::crop(image, vector)
+  crop <- terra::crop(image, vector, filename = gsub(".tif","_crop.tif",terra::sources(image)))
   
   return(crop)
 }
-
 
 list_of_cropped_images <- lapply(list_of_filtered_images, crop_around)
 
@@ -141,5 +143,5 @@ composite <- terra::rast(list_of_median_of_bands)
 
 terra::plot(composite)
 
-terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif")
+terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif", overwrite = T)
 
