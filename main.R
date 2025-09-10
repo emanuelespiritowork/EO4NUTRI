@@ -52,7 +52,7 @@ rename_bands <- function(image){
 list_of_renamed_images <- lapply(list_of_images,rename_bands)
 
 save_images_function <- function(image,percorso = "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/"){
-  date <- stringr::str_match(terra::sources(image), "PRS_L1_STD_OFFL_//s*(.*?)//s*/Atcor_regrid")[,2]
+  date <- stringr::str_match(terra::sources(image), "PRS_L1_STD_OFFL_\\s*(.*?)\\s*/Atcor_regrid")[,2]
   terra::writeRaster(image,paste0(percorso,date,".tif"),overwrite=T)
   return(date)
 }
