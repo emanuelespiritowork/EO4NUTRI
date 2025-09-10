@@ -7,7 +7,7 @@ list_of_dates <- c(
   "20220627",
   "20220703",
   "20220801",
-  "20221201",
+  #"20221201", contaminata dall'ombra delle nuvole difficilmente distinguibili, foschia ovunque
   "20240407",
   "20240512",
   #"20240627",#brutta come la fame 
@@ -23,7 +23,7 @@ list_of_dates <- c(
   "20230807",
   "20230905",
   "20230911",
-  "20231004",
+  #"20231004",#troppo nuvolosa
   "20231125"
 )
 
@@ -59,7 +59,11 @@ save_images_function <- function(image,percorso = "//10.0.1.243/nr_working/emanu
 
 lapply(list_of_renamed_images,save_images_function)
 
-list_of_images_path <- list.files("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/", pattern = "\\.tif$", full.names = T)
+source("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/EO4NUTRI/cloud_mask.R")
+
+mask_cloud()
+
+list_of_images_path <- list.files("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/", pattern = "\\_cloud.tif$", full.names = T)
 
 list_of_renamed_images <- lapply(list_of_images_path, read_images)
 
