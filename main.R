@@ -51,6 +51,8 @@ rename_bands <- function(image){
 
 list_of_renamed_images <- lapply(list_of_images,rename_bands)
 
+save_band_names <- terra::names(list_of_renamed_images[[1]])
+
 save_images_function <- function(image,percorso = "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/"){
   date <- stringr::str_match(terra::sources(image), "PRS_L1_STD_OFFL_\\s*(.*?)\\s*/Atcor_regrid")[,2]
   terra::writeRaster(image,paste0(percorso,date,".tif"),overwrite=T)
@@ -63,9 +65,15 @@ source("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/EO4NUTRI/cloud_mask.R
 
 mask_cloud()
 
-list_of_images_path <- list.files("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/", pattern = "\\_cloud.tif$", full.names = T)
+list_of_images_path_cld <- list.files("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/", pattern = "\\_cloud.tif$", full.names = T)
 
-list_of_renamed_images <- lapply(list_of_images_path, read_images)
+read_images_after_cloud <- function(image){
+  read <- terra::rast(image)
+  terra::set.names(read, save_band_names)
+  return(read)
+}
+
+list_of_renamed_images_after_cloud <- lapply(list_of_images_path_cld, read_images_after_cloud)
 
 apply_filters <- function(image){
   #create NDVI layer
@@ -110,7 +118,7 @@ apply_filters <- function(image){
   return(image_NSMI_mask)
 }
 
-list_of_filtered_images <- lapply(list_of_renamed_images, apply_filters)
+list_of_filtered_images <- lapply(list_of_renamed_images_after_cloud, apply_filters)
 
 vector <- terra::vect("//10.0.1.243/nr_data/1_vector_layer/Italy/Bonifiche Ferraresi/Piani_colturali/Jolanda/2023/piano_colturale_2023.shp")
 
