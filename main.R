@@ -157,3 +157,27 @@ terra::plot(composite)
 
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif", overwrite = T)
 
+#new request: ENVI and nm for bands
+band_names <- as.character(as.numeric(terra::names(composite))*1000)
+terra::set.names(composite,band_names)
+
+terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.bsq", 
+                   filetype = "ENVI", overwrite = T)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
