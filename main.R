@@ -29,9 +29,12 @@ list_of_dates <- c(
 
 create_image_path <- function(date){
   year <- substr(date,1,4)
-  path <- paste0("//10.0.1.243/nr_data/3_rs_data/PRISMA/JDS/",year,"/L1/","PRS_L1_STD_OFFL_",date,"/Atcor_regrid/PRISMA_resample.tif")
+  #path <- paste0("//10.0.1.243/nr_data/3_rs_data/PRISMA/JDS/",year,"/L1/","PRS_L1_STD_OFFL_",date,"/Atcor_regrid/PRISMA_resample.tif")
+  path <- paste0("//10.0.1.243/nr_data/3_rs_data/PRISMA/JDS/",year,"/L1/","PRS_L1_STD_OFFL_",date,"/Atcor_regrid_crop_smooth/PRISMA_smoothed.tif")
   return(path)
 }
+
+
 
 list_of_images_path <- lapply(list_of_dates,create_image_path)
 
