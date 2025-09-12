@@ -152,11 +152,22 @@ median_each_layer <- function(image){
 
 list_of_median_of_bands <- lapply(traspose_list,median_each_layer)
 
+number_of_layers_of_not_NA <- sum(!is.na(terra::rast(traspose_list[[1]])))
+
+dates_of_not_NA_function <- function(image){
+  raster <- terra::rast(image)
+  raster[!is.na(raster)] <- substr(terra::varnames(raster),0,8)
+}
+
+#dates_of_not_NA <- terra::rast(traspose_list[[1]])
+
 composite <- terra::rast(list_of_median_of_bands)
 
 terra::plot(composite)
 
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif", overwrite = T)
+
+terra::writeRaster(number_of_layers_of_not_NA, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/number_of_layers_of_not_NA.tif", overwrite = T)
 
 #new request: ENVI and nm for bands
 band_names <- as.character(as.numeric(terra::names(composite))*1000)
@@ -165,6 +176,8 @@ terra::set.names(composite,band_names)
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.bsq", 
                    filetype = "ENVI", overwrite = T)
 
+terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/number_of_layers_of_not_NA.tif.bsq", 
+                   filetype = "ENVI", overwrite = T)
 
 
 
