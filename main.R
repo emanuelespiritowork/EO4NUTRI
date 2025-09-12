@@ -79,7 +79,7 @@ list_of_renamed_images_after_cloud <- lapply(list_of_images_path_cld, read_image
 apply_filters <- function(image){
   #create NDVI layer
   #use the new bands 664 (ex 660) and 806 (ex 802)
-  NDVI_layer <- (image$`0.80671` - image$`0.66489`) / (image$`0.80671` + image$`0.66489`)
+  NDVI_layer <- (image$`0.806711` - image$`0.664894`) / (image$`0.806711` + image$`0.664894`)
   
   #apply threshold on NDVI
   NDVI_threshold <- 0.3
@@ -159,6 +159,8 @@ terra::plot(composite)
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif", overwrite = T)
 
 #new request: ENVI and nm for bands
+band_names <- as.character(as.numeric(terra::names(composite))*1000)
+terra::set.names(composite,band_names)
 
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.bsq", 
                    filetype = "ENVI", overwrite = T)
