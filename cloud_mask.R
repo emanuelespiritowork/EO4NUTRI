@@ -46,7 +46,7 @@ mask_cloud <- function(master_path = "//10.0.1.243/nr_working/emanuele/Progetto_
   
   list_of_all_images_with_0 <- lapply(list_of_all_images,put_0_outside)
   
-  list_of_files <- list.files(master_path, pattern = "[0-9]{8}//.tif$", full.names = T)
+  list_of_files <- list.files(master_path, pattern = "[0-9]{8}\\.tif$", full.names = T)
   
   cloud <- function(image_path, df_mask){
     image <- terra::rast(image_path)

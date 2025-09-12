@@ -27,14 +27,14 @@ list_of_dates <- c(
   "20231125"
 )
 
+bands <- read.table("//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/EO4NUTRI/bands.txt", quote="", comment.char="")$V1
+
 create_image_path <- function(date){
   year <- substr(date,1,4)
   #path <- paste0("//10.0.1.243/nr_data/3_rs_data/PRISMA/JDS/",year,"/L1/","PRS_L1_STD_OFFL_",date,"/Atcor_regrid/PRISMA_resample.tif")
   path <- paste0("//10.0.1.243/nr_data/3_rs_data/PRISMA/JDS/",year,"/L1/","PRS_L1_STD_OFFL_",date,"/Atcor_regrid_crop_smooth/PRISMA_smoothed.tif")
   return(path)
 }
-
-
 
 list_of_images_path <- lapply(list_of_dates,create_image_path)
 
@@ -47,14 +47,12 @@ list_of_images <- lapply(list_of_images_path, read_images)
 
 rename_bands <- function(image){
   get_band_names <- terra::names(image)
-  new_band_names <- substr(get_band_names, 24, 30)
+  new_band_names <- bands
   terra::set.names(image,new_band_names)
   return(image)
 }
 
 list_of_renamed_images <- lapply(list_of_images,rename_bands)
-
-save_band_names <- terra::names(list_of_renamed_images[[1]])
 
 save_images_function <- function(image,percorso = "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Images_for_composite/"){
   date <- stringr::str_match(terra::sources(image), "PRS_L1_STD_OFFL_\\s*(.*?)\\s*/Atcor_regrid")[,2]
@@ -72,7 +70,7 @@ list_of_images_path_cld <- list.files("//10.0.1.243/nr_working/emanuele/Progetto
 
 read_images_after_cloud <- function(image){
   read <- terra::rast(image)
-  terra::set.names(read, save_band_names)
+  terra::set.names(read, bands)
   return(read)
 }
 
@@ -161,8 +159,6 @@ terra::plot(composite)
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.tif", overwrite = T)
 
 #new request: ENVI and nm for bands
-band_names <- as.character(as.numeric(terra::names(composite))*1000)
-terra::set.names(composite,band_names)
 
 terra::writeRaster(composite, "//10.0.1.243/nr_working/emanuele/Progetto_EO4NUTRI/Composite/composite.bsq", 
                    filetype = "ENVI", overwrite = T)
